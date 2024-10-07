@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id          Int       @id @default(autoincrement())
+  username    String
+  problem     Problem[]
+  answers     Answer[]
+  upvote      UpVote[]
+  downvote    DownVote[]
+  report      Report[]
+  bookmark    Bookmark[]
+
+}
+model Problem {
+  id          Int       @id @default(autoincrement())
+  userId      Int       
+  problem     String
+  answers     Answer[]
+  bookmark    Bookmark[]
+  report      Report[]
+  createdAt   DateTime  @default(now())  
+  user        User      @relation(fields: [userId],references: [id])
+  @@unique([userId])
+}
+
+model Answer {
+  id          Int       @id @default(autoincrement())
+  problemId   Int
+  userId      Int
+  upvote      UpVote[] 
+  downvote    DownVote[]
+  problem     Problem   @relation(fields: [problemId],references: [id])
+  user        User      @relation(fields: [userId],references: [id])
+}
+
+model Bookmark{
+  id          Int       @id @default(autoincrement())  
+  problemId   Int
+  userId      Int
+  problems    Problem   @relation(fields: [problemId],references: [id])
+  user        User      @relation(fields: [userId],references: [id])
+}
+
+model UpVote{
+  id          Int       @id @default(autoincrement())
+  answerId    Int
+  userId      Int     
+  problem     Answer   @relation(fields: [answerId],references: [id])
+  user        User     @relation(fields: [userId],references: [id])
+}
+
+model DownVote{
+  id          Int       @id @default(autoincrement())
+  answerId    Int
+  userId      Int
+  problem     Answer   @relation(fields: [answerId],references: [id])
+  user        User     @relation(fields: [userId],references: [id])
+}
+
+model Report{
+  id          Int       @id @default(autoincrement())
+  problemId   Int
+  userId      Int
+  problem     Problem   @relation(fields: [problemId],references: [id])
+  user        User      @relation(fields: [userId],references: [id])
+}
+
+enum  VoteType{
+  UPVOTE
+  DOWNVOTE
+}
