@@ -1,12 +1,11 @@
-import Image from "next/image";
-import { Providers } from "./provider";
-import { useSession } from "next-auth/react";
+
+import { Search } from "./search/page";
 
 
 export default function Home() {
   return (
    <div>
-    <h1>Hello this somthing new.</h1>
+    <Search/>
    </div>
   );
 }
